@@ -1,6 +1,6 @@
 - 👋 Hi, I’m Aniruddh Nagar.
 - 👀 I’m interested in Software Development Projects.
-- 🌱 I’m currently learning FullStack developer skill set.
+- 🌱 I’m currently learning Backend development skill set.
 - 📫 Reach me at: aniruddhnagar@gmail.com
 
 
