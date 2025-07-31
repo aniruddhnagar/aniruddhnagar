@@ -1,30 +1,19 @@
 # 👋 Hi, I’m Aniruddh Nagar
 
-🎯 I'm a passionate software developer with a strong interest in building scalable, high-performance systems.  
-💡 I actively work on projects involving system-level programming, backend architecture, and NTFS filesystem parsing.
+- 👀 I’m passionate about Software Development and System Programming.
+- 🌱 Currently deepening my skills in Backend Development and NTFS internals.
+- 📫 Reach me at: [aniruddhnagar@gmail.com](mailto:aniruddhnagar@gmail.com)
 
-## 🚀 Tech Stack Overview
+## 📊 GitHub Stats & Language Usage
 
-| Domain                    | Technologies & Tools Used                                                   | Status                  |
-|--------------------------|------------------------------------------------------------------------------|-------------------------|
-| **Programming Languages** | C, C++, Java, Python, Shell Scripting                                        | ✅ Actively Used         |
-| **Backend Development**   | Java (Spring Boot), C++ for native system tools, RESTful API design         | 🚧 Currently Learning   |
-| **System Programming**    | Win32 API, NTFS internals, low-level file system parsing                    | ✅ Core Focus Area      |
-| **Operating Systems**     | Linux (synchronization, memory mgmt, kernel concepts), Windows internals    | ✅ Actively Practicing  |
-| **Database**              | MSSQL, Oracle                                                                | 🛠️ Working Knowledge    |
-| **Tools & Platforms**     | Git, GitHub, Visual Studio, VS Code, IntelliJ IDEA                           | ✅ Daily Usage          |
-| **Other Interests**       | Design Patterns, Object-Oriented Design, Competitive Coding                  | 📚 Ongoing Learning     |
+<!-- GitHub stats with private contributions and ranking icon -->
+![Aniruddh's GitHub stats](https://github-readme-stats.vercel.app/api?username=aniruddhnagar&show_icons=true&count_private=true&theme=transparent&rank_icon=github)
 
-## 📬 Get in Touch
+<!-- Most used languages across public and private repos in donut layout -->
+[![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=aniruddhnagar&layout=donut-vertical&theme=transparent&count_private=true&hide=html,css,javascript)](https://github.com/anuraghazra/github-readme-stats)
 
-- 📧 Email: [aniruddhnagar@gmail.com](mailto:aniruddhnagar@gmail.com)
-- 💼 LinkedIn: *(Add your LinkedIn URL if applicable)*
-
----
-
-![Aniruddh's GitHub Stats](https://github-readme-stats.vercel.app/api?username=aniruddhnagar&show_icons=true&theme=transparent&rank_icon=github&count_private=true)
-
-[![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=aniruddhnagar&layout=donut-vertical&theme=transparent&count_private=true)](https://github.com/anuraghazra/github-readme-stats)
+> ⚙️ Languages shown are based on code in public and private repositories.  
+> 🧠 Currently focused on: **C++, Java, NTFS internals, Backend APIs, and System-Level Tools.**
 
 <!---
 aniruddhnagar is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
