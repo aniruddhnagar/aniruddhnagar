@@ -3,33 +3,34 @@ name: Update GitHub Stats
 on:
   schedule:
     - cron: '0 0 * * 0'  # Runs every Sunday at 00:00 UTC
-  workflow_dispatch:      # Allows manual trigger from GitHub UI
+  workflow_dispatch:      # Allows manual trigger
 
 jobs:
   update-stats:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3    # Checks out your repo
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'      # Use latest Python 3
+          python-version: '3.x'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install matplotlib requests   # Needed for your script
+          pip install matplotlib requests
 
       - name: Run GitHub Stats Script
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Provides access to your repo
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python github_stats.py
 
       - name: Commit and Push Changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add assets/github_language_pie.png assets/github_commits_bar.png assets/github_stars_bar.png assets/github_summary.md
+          git add assets/*
           git commit -m "Update GitHub stats charts" || echo "No changes to commit"
           git push
