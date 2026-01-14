@@ -3,6 +3,8 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 import os
 
+os.makedirs("assets", exist_ok=True)
+
 # -------- CONFIG --------
 GITHUB_USERNAME = "aniruddhnagar"
 OUTPUT_DIR = "assets"
