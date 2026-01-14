@@ -1,90 +1,83 @@
 import os
 import requests
-from collections import Counter
 import matplotlib.pyplot as plt
+from collections import Counter
 
-# ----------------------------
-# CONFIG
-# ----------------------------
-GITHUB_USERNAME = "aniruddhnagar"  # <-- your GitHub username
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")  # GitHub Actions token
+USERNAME = "aniruddhnagar"
+TOKEN = os.getenv("GITHUB_TOKEN")
 
-HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
-
+HEADERS = {"Authorization": f"token {TOKEN}"}
 ASSETS_DIR = "assets"
-os.makedirs(ASSETS_DIR, exist_ok=True)  # Ensure folder exists
+os.makedirs(ASSETS_DIR, exist_ok=True)
 
 # ----------------------------
-# FETCH REPOS
+# Fetch repositories
 # ----------------------------
-repos_url = f"https://api.github.com/users/{GITHUB_USERNAME}/repos?per_page=100"
-response = requests.get(repos_url, headers=HEADERS)
-repos = response.json()
-
-if isinstance(repos, dict) and repos.get("message"):
-    print("Error fetching repos:", repos["message"])
-    exit(1)
-
-print(f"Fetched {len(repos)} repos.")
+repos_url = f"https://api.github.com/users/{USERNAME}/repos?per_page=100"
+repos = requests.get(repos_url, headers=HEADERS).json()
 
 # ----------------------------
-# COMPUTE LANGUAGE STATS
+# Language Stats
 # ----------------------------
-languages = []
+language_counter = Counter()
+
 for repo in repos:
-    lang = repo["language"]
-    if lang:
-        languages.append(lang)
+    if repo["fork"]:
+        continue
+    lang_url = repo["languages_url"]
+    langs = requests.get(lang_url, headers=HEADERS).json()
+    for lang, bytes_count in langs.items():
+        language_counter[lang] += bytes_count
 
-lang_counter = Counter(languages)
-print("Language usage:", lang_counter)
-
-# ----------------------------
-# PLOT PIE CHART
-# ----------------------------
-plt.figure(figsize=(6,6))
-plt.pie(lang_counter.values(), labels=lang_counter.keys(), autopct="%1.1f%%", startangle=140)
-plt.title("GitHub Language Usage")
-plt.savefig(os.path.join(ASSETS_DIR, "github_language_pie.png"))
-plt.close()
-
-# ----------------------------
-# PLOT BAR CHARTS: Stars & Forks
-# ----------------------------
-repo_names = [repo["name"] for repo in repos]
-repo_stars = [repo["stargazers_count"] for repo in repos]
-repo_forks = [repo["forks_count"] for repo in repos]
-
-# Stars bar chart
-plt.figure(figsize=(8,6))
-plt.barh(repo_names, repo_stars, color="skyblue")
-plt.xlabel("Stars")
-plt.title("GitHub Stars per Repo")
+# Plot Language Pie
+plt.figure(figsize=(6, 6))
+plt.pie(
+    language_counter.values(),
+    labels=language_counter.keys(),
+    autopct="%1.1f%%",
+    startangle=140,
+    textprops={"fontsize": 10},
+)
+plt.title("Language Usage", fontsize=14)
 plt.tight_layout()
-plt.savefig(os.path.join(ASSETS_DIR, "github_stars_bar.png"))
-plt.close()
-
-# Forks bar chart
-plt.figure(figsize=(8,6))
-plt.barh(repo_names, repo_forks, color="orange")
-plt.xlabel("Forks")
-plt.title("GitHub Forks per Repo")
-plt.tight_layout()
-plt.savefig(os.path.join(ASSETS_DIR, "github_forks_bar.png"))
+plt.savefig(f"{ASSETS_DIR}/language_usage.png", dpi=150)
 plt.close()
 
 # ----------------------------
-# SUMMARY
+# Commit Stats
 # ----------------------------
-summary_md = f"""
-# GitHub Stats Summary
+commit_counts = Counter()
 
-**Total Repositories:** {len(repos)}  
-**Languages Used:** {', '.join(lang_counter.keys())}  
-**Top Language:** {lang_counter.most_common(1)[0][0] if lang_counter else 'N/A'}
-"""
+for repo in repos:
+    if repo["fork"]:
+        continue
 
-with open(os.path.join(ASSETS_DIR, "github_summary.md"), "w") as f:
-    f.write(summary_md)
+    commits_url = f"https://api.github.com/repos/{USERNAME}/{repo['name']}/commits?per_page=100"
+    commits = requests.get(commits_url, headers=HEADERS).json()
 
-print("Charts and summary generated successfully in 'assets/' folder.")
+    if isinstance(commits, list):
+        commit_counts[repo["name"]] += len(commits)
+
+# Take top 8 repos by commits
+top_repos = commit_counts.most_common(8)
+
+if top_repos:
+    repos_names, commits_numbers = zip(*top_repos)
+
+    plt.figure(figsize=(8, 4))
+    plt.bar(repos_names, commits_numbers)
+    plt.xticks(rotation=30, ha="right", fontsize=9)
+    plt.ylabel("Commits")
+    plt.title("Top Repositories by Commit Count", fontsize=14)
+    plt.tight_layout()
+    plt.savefig(f"{ASSETS_DIR}/commit_stats.png", dpi=150)
+    plt.close()
+
+# ----------------------------
+# Summary Markdown (optional)
+# ----------------------------
+with open(f"{ASSETS_DIR}/summary.md", "w") as f:
+    f.write("## GitHub Stats (Auto-generated)\n\n")
+    f.write("### Language Usage\n")
+    for lang, count in language_counter.most_common():
+        f.write(f"- {lang}\n")

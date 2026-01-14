@@ -4,19 +4,21 @@
 🚀 Passionate about building **distributed systems**, **microservices**, and **high-performance backend platforms**.  
 
 ---
+## 📊 GitHub Stats
 
-## 📊 GitHub Overview
+<table>
+  <tr>
+    <td align="center">
+      <b>💻 Language Usage</b><br/>
+      <img src="assets/language_usage.png" width="350"/>
+    </td>
+    <td align="center">
+      <b>📈 Commit Activity</b><br/>
+      <img src="assets/commit_stats.png" width="500"/>
+    </td>
+  </tr>
+</table>
 
-{% include_relative assets/github_summary.md %}
-
-### Language Usage
-![Language Usage](assets/github_language_pie.png)
-
-### Commits per Repo
-![Commits per Repo](assets/github_commits_bar.png)
-
-### Stars per Repo
-![Stars per Repo](assets/github_stars_bar.png)
 
 ---
 
