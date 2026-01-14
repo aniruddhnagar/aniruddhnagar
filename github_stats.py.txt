@@ -1,0 +1,86 @@
+import requests
+from collections import defaultdict
+import matplotlib.pyplot as plt
+import os
+
+# -------- CONFIG --------
+GITHUB_USERNAME = "aniruddhnagar"
+OUTPUT_DIR = "assets"
+TOKEN = os.getenv("GITHUB_TOKEN", "")
+headers = {"Authorization": f"token {TOKEN}"} if TOKEN else {}
+
+# -------- FETCH REPOS --------
+repos_url = f"https://api.github.com/users/{GITHUB_USERNAME}/repos?per_page=100"
+repos = requests.get(repos_url, headers=headers).json()
+
+language_count = defaultdict(int)
+repo_commit_count = {}
+repo_stars = {}
+repo_forks = {}
+total_commits = 0
+
+for repo in repos:
+    repo_name = repo["name"]
+
+    # Languages
+    lang_data = requests.get(repo["languages_url"], headers=headers).json()
+    for lang, bytes_count in lang_data.items():
+        language_count[lang] += bytes_count
+
+    # Stars & Forks
+    repo_stars[repo_name] = repo["stargazers_count"]
+    repo_forks[repo_name] = repo["forks_count"]
+
+    # Commits
+    commits_url = f"https://api.github.com/repos/{GITHUB_USERNAME}/{repo_name}/commits?per_page=1"
+    response = requests.get(commits_url, headers=headers)
+    if 'Link' in response.headers:
+        try:
+            last_page = int(response.headers['Link'].split('page=')[-1].split('>')[0])
+        except:
+            last_page = 1
+    else:
+        last_page = len(response.json())
+    repo_commit_count[repo_name] = last_page
+    total_commits += last_page
+
+# -------- PLOT LANGUAGE PIE CHART --------
+if language_count:
+    plt.figure(figsize=(8,8))
+    plt.pie(language_count.values(), labels=language_count.keys(), autopct='%1.1f%%', startangle=140)
+    plt.title(f"{GITHUB_USERNAME}'s Language Distribution")
+    plt.savefig(f"{OUTPUT_DIR}/github_language_pie.png", bbox_inches='tight')
+    plt.close()
+
+# -------- PLOT COMMITS BAR CHART --------
+if repo_commit_count:
+    plt.figure(figsize=(10,5))
+    plt.bar(repo_commit_count.keys(), repo_commit_count.values(), color='skyblue')
+    plt.xticks(rotation=45, ha='right')
+    plt.ylabel("Commits")
+    plt.title(f"{GITHUB_USERNAME}'s Commits per Repo")
+    plt.tight_layout()
+    plt.savefig(f"{OUTPUT_DIR}/github_commits_bar.png", bbox_inches='tight')
+    plt.close()
+
+# -------- PLOT STARS BAR CHART --------
+if repo_stars:
+    plt.figure(figsize=(10,5))
+    plt.bar(repo_stars.keys(), repo_stars.values(), color='gold')
+    plt.xticks(rotation=45, ha='right')
+    plt.ylabel("Stars")
+    plt.title(f"{GITHUB_USERNAME}'s Stars per Repo")
+    plt.tight_layout()
+    plt.savefig(f"{OUTPUT_DIR}/github_stars_bar.png", bbox_inches='tight')
+    plt.close()
+
+# -------- GENERATE SUMMARY --------
+top_languages = sorted(language_count.items(), key=lambda x: x[1], reverse=True)[:5]
+summary_text = f"""
+**Total Repositories:** {len(repos)}
+**Total Commits:** {total_commits}
+**Total Stars:** {sum(repo_stars.values())}
+**Top Languages:** {', '.join([lang for lang,_ in top_languages])}
+"""
+with open(f"{OUTPUT_DIR}/github_summary.md", "w") as f:
+    f.write(summary_text.strip())
